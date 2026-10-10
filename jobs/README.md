@@ -1,0 +1,1 @@
+One directory per job: `jobs/<jobId>/` containing only ciphertext — `input.enc.b64` (base64 text), or `input.enc.b64.partNNN` + `parts.json` when split — plus the non-sensitive `meta.json`. No plaintext data or configuration is ever committed.

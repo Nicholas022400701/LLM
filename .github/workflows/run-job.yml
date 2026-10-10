@@ -1,0 +1,164 @@
+# run-job: encrypted batch job runner on GitHub Actions
+# 输入 jobs/<jobId>/input.enc(.b64|.partNNN) 只许密文；输出加密后提交到 results 分支 results/<jobId>/
+# 日志只打印粗粒度进度、版本号、字节数和 SHA256；不 set -x；不打印数据、配置、密钥
+name: run-job
+on:
+  workflow_dispatch:
+    inputs:
+      jobId:
+        description: 'jobId = jobs/<jobId>/ on main (letters, digits, . _ -)'
+        required: true
+        type: string
+      maxMinutes:
+        description: 'wall-clock limit for run.sh, minutes'
+        required: false
+        default: '60'
+        type: string
+      testKey:
+        description: 'TEST ONLY. 64-hex key used instead of the secret. Dispatch inputs are visible in run metadata, so use only with fake data. NEVER the real key.'
+        required: false
+        default: ''
+        type: string
+      splitKb:
+        description: 'also write output.enc.b64.partNNN of this many KB (0 = no parts)'
+        required: false
+        default: '700'
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: job-${{ inputs.jobId }}
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      JOB_ID: ${{ inputs.jobId }}
+      MAX_MIN: ${{ inputs.maxMinutes }}
+      SPLIT_KB: ${{ inputs.splitKb }}
+      TEST_MODE: ${{ inputs.testKey != '' }}
+      REPO_PRIVATE: ${{ github.event.repository.private }}
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check inputs, install cryptography, print versions
+        shell: bash
+        run: |
+          [[ "$JOB_ID" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$ ]] || { echo "bad jobId"; exit 1; }
+          [[ "$MAX_MIN" =~ ^[0-9]+$ && "$SPLIT_KB" =~ ^[0-9]+$ ]] || { echo "bad maxMinutes/splitKb"; exit 1; }
+          [ "$MAX_MIN" -le 220 ] || { echo "maxMinutes must be <= 220 (job timeout is 240 incl. setup/encrypt/push)"; exit 1; }
+          d="jobs/$JOB_ID"; [ -d "$d" ] || { echo "no such job dir"; exit 1; }
+          bad=$(find "$d" -type f ! -name 'input.enc' ! -name 'input.enc.b64' ! -name 'input.enc.b64.part*' ! -name 'input.enc.part*' ! -name 'parts.json' ! -name 'meta.json' | wc -l)
+          [ "$bad" = "0" ] || { echo "job dir has $bad file(s) outside the allowed ciphertext set"; exit 1; }
+          python -m pip install -q cryptography >/dev/null 2>&1
+          python -c "import sys,cryptography;print('python',sys.version.split()[0],'cryptography',cryptography.__version__)"
+          echo "runner nproc=$(nproc) memKb=$(awk '/MemTotal/{print $2}' /proc/meminfo) testMode=$TEST_MODE"
+      - name: Decrypt input
+        shell: bash
+        env:
+          SECRET_KEY: ${{ secrets.LLM_DATA_KEY }}
+        run: |
+          # key never goes through a step env/expression in testKey mode: read it from the event file and mask it first
+          if [ "$TEST_MODE" = "true" ]; then
+            k=$(python -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["inputs"].get("testKey",""))')
+            echo "::add-mask::$k"; echo "WARNING: testKey mode, fake data only"
+          else
+            k="$SECRET_KEY"
+          fi
+          [ -n "$k" ] || { echo "no key: secret LLM_DATA_KEY not set and no testKey"; exit 1; }
+          LLM_DATA_KEY="$k" python tools/cryptBox.py decrypt --in "jobs/$JOB_ID/input.enc" --dir "$RUNNER_TEMP/work" --job "$JOB_ID"
+      - name: Install job requirements (pip output goes to output/pip.log, encrypted)
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP/work" && mkdir -p output
+          if [ -f requirements.txt ]; then
+            if python -m pip install -q -r requirements.txt > output/pip.log 2>&1; then echo "pip requirements ok"; else echo "pip requirements FAILED, see output/pip.log"; touch "$RUNNER_TEMP/pipFailed"; fi
+          else echo "no requirements.txt"; fi
+      - name: Run run.sh (stdout/stderr go to output/console.log, encrypted)
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP/work"
+          start=$(date -u +%FT%TZ)
+          if [ -f "$RUNNER_TEMP/pipFailed" ]; then ec=97
+          elif [ ! -f run.sh ]; then ec=98; echo "no run.sh in package"
+          else
+            chmod -R a-w . && chmod -R u+w output
+            t0=$(date +%s)
+            timeout -k 60 $((MAX_MIN*60)) bash ./run.sh > output/console.log 2>&1; ec=$?
+            echo "run.sh exit=$ec seconds=$(( $(date +%s) - t0 ))"
+            chmod -R u+w .
+          fi
+          end=$(date -u +%FT%TZ)
+          python - "$start" "$end" "$ec" <<'PY'
+          import cryptography, json, os, platform, sys
+          start, end, ec = sys.argv[1:4]
+          mem = 0
+          for line in open("/proc/meminfo"):
+              if line.startswith("MemTotal:"):
+                  mem = int(line.split()[1]) * 1024
+          info = {"uname": " ".join(platform.uname()), "nproc": os.cpu_count(), "memoryBytes": mem, "python": platform.python_version(), "cryptography": cryptography.__version__}
+          gh = {"repository": os.environ.get("GITHUB_REPOSITORY"), "private": os.environ.get("REPO_PRIVATE") == "true", "commitSha": os.environ.get("GITHUB_SHA"), "workflowRunId": int(os.environ["GITHUB_RUN_ID"]), "workflow": "run-job.yml", "runnerOs": os.environ.get("RUNNER_OS")}
+          meta = {"runId": int(os.environ["GITHUB_RUN_ID"]), "runAttempt": int(os.environ.get("GITHUB_RUN_ATTEMPT", "1")), "runnerInfo": info, "startUtc": start, "endUtc": end, "exitCode": int(ec), "github": gh}
+          json.dump(meta, open(os.environ["RUNNER_TEMP"] + "/runmeta.json", "w"), indent=1)
+          print("runmeta ok exitCode=%s nproc=%s memoryBytes=%s" % (ec, info["nproc"], mem))
+          PY
+      - name: Encrypt output
+        shell: bash
+        env:
+          SECRET_KEY: ${{ secrets.LLM_DATA_KEY }}
+        run: |
+          if [ "$TEST_MODE" = "true" ]; then
+            k=$(python -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["inputs"].get("testKey",""))')
+            echo "::add-mask::$k"
+          else
+            k="$SECRET_KEY"
+          fi
+          mkdir -p "$RUNNER_TEMP/res"
+          sp=""; [ "$SPLIT_KB" = "0" ] || sp="--split $SPLIT_KB"
+          LLM_DATA_KEY="$k" python tools/cryptBox.py encrypt --dir "$RUNNER_TEMP/work/output" --out "$RUNNER_TEMP/res/output.enc" --job "$JOB_ID" --b64 $sp
+          python tools/cryptBox.py addmeta --meta "$RUNNER_TEMP/res/meta.json" --json "$RUNNER_TEMP/runmeta.json"
+          rm -f "$RUNNER_TEMP/res/output.enc"
+          if [ -f "$RUNNER_TEMP/res/output.enc.b64.part000" ]; then rm -f "$RUNNER_TEMP/res/output.enc.b64"; echo "split: whole output.enc.b64 not committed, parts only"; fi
+          ls "$RUNNER_TEMP/res" | wc -l | sed 's/^/result files: /'
+      - name: Commit results to the results branch
+        shell: bash
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "$RUNNER_TEMP" && rm -rf wt && mkdir wt && cd wt
+          git init -q && git config user.name "github-actions[bot]" && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          dest="results/$JOB_ID"
+          for i in 1 2 3 4 5; do
+            if git ls-remote --exit-code --heads origin results >/dev/null 2>&1; then
+              git fetch -q --depth 1 origin results && git checkout -q -B results FETCH_HEAD
+            else
+              git checkout -q --orphan results && git rm -rfq --cached . 2>/dev/null || true
+            fi
+            rm -rf "$dest" && mkdir -p "$dest" && cp "$RUNNER_TEMP"/res/* "$dest"/
+            git add -A "$dest" && git -c commit.gpgsign=false commit -q -m "results $JOB_ID run $GITHUB_RUN_ID attempt $GITHUB_RUN_ATTEMPT"
+            if git push -q origin HEAD:results; then echo "pushed $dest commit=$(git rev-parse HEAD)"; exit 0; fi
+            echo "push attempt $i failed, retrying"; sleep $((i*5))
+          done
+          echo "push failed after 5 attempts"; exit 1
+      - name: Report (non-sensitive meta fields only)
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          p = os.environ["RUNNER_TEMP"] + "/res/meta.json"
+          if not os.path.exists(p):
+              print("no meta.json produced"); raise SystemExit(1)
+          m = json.load(open(p))
+          print({k: m.get(k) for k in ("jobId", "plainBytes", "plainSha256", "encBytes", "encSha256", "exitCode", "startUtc", "endUtc", "runId")})
+          raise SystemExit(0 if m.get("exitCode") == 0 else 1)
+          PY
