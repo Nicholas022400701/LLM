@@ -91,7 +91,7 @@ jobs:
           else
             chmod -R a-w . && chmod -R u+w output
             t0=$(date +%s)
-            env -u GITHUB_STEP_SUMMARY -u GITHUB_ENV -u GITHUB_OUTPUT -u GITHUB_PATH -u GITHUB_STATE timeout -k 60 $((MAX_MIN*60)) bash ./run.sh > output/console.log 2>&1; ec=$?
+            env -u GITHUB_STEP_SUMMARY -u GITHUB_ENV -u GITHUB_OUTPUT -u GITHUB_PATH -u GITHUB_STATE timeout -k 60 $((MAX_MIN*60)) bash ./run.sh > output/console.log 2>&1 && ec=0 || ec=$?
             echo "run.sh exit=$ec seconds=$(( $(date +%s) - t0 ))"
             chmod -R u+w .
           fi
