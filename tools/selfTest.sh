@@ -48,5 +48,16 @@ t=tarfile.open(fileobj=io.BytesIO(p),mode='r:gz');m=json.load(t.extractfile('MAN
 print(json.dumps(m,indent=1)[:600])
 print('tar members:',[x.name for x in t.getmembers()])
 PY
+echo "== auditLog self mode on the self-test payload (legacy job id form allowed here)"
+al="$(dirname "$0")/auditLog.py"; wf="$(dirname "$0")/../.github/workflows/run-job.yml"
+mkdir -p "$t/res"; cp "$t/enc/meta.json" "$t/res/"; cp "$t/enc/input.enc.b64" "$t/res/output.enc.b64"
+python3 "$al" self --res "$t/res" --job "$job" --job-pattern '[A-Za-z0-9_-]+'
+python3 "$al" self --res "$t/res" --job "$job" && { echo "audit self accepted a non-opaque job id"; exit 1; } || echo "non-opaque job id rejected (exit $?)"
+echo "== auditLog log mode: a clean synthetic log must pass; the same log plus a planted canary+key line must fail"
+printf '2026-01-01T00:00:00.0000000Z ##[group]Run cd "$RUNNER_TEMP/work"\n2026-01-01T00:00:00.0000000Z start=$(date -u +%%FT%%TZ)\n2026-01-01T00:00:00.0000000Z ##[endgroup]\n2026-01-01T00:00:00.0000000Z run.sh exit=3 seconds=0\n' > "$t/good.log"
+echo CANARY-SELFTEST > "$t/canary.txt"
+python3 "$al" log --log "$t/good.log" --workflow "$wf" --canary-file "$t/canary.txt" --key-env LLM_DATA_KEY --out "$t/residual.txt"
+{ cat "$t/good.log"; printf '2026-01-01T00:00:00.0000000Z CANARY-SELFTEST %s\n' "$LLM_DATA_KEY"; } > "$t/bad.log"
+python3 "$al" log --log "$t/bad.log" --workflow "$wf" --canary-file "$t/canary.txt" --key-env LLM_DATA_KEY --out "$t/residual.txt" && { echo "audit log missed a planted leak"; exit 1; } || echo "planted leak flagged (exit $?)"
 rm -rf "$t"
 echo "SELFTEST DONE"

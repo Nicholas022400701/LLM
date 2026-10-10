@@ -95,6 +95,7 @@ jobs:
             echo "run.sh exit=$ec seconds=$(( $(date +%s) - t0 ))"
             chmod -R u+w .
           fi
+          n=0; for f in "$GITHUB_STEP_SUMMARY" "$GITHUB_OUTPUT" "$GITHUB_ENV" "$GITHUB_PATH" "$GITHUB_STATE"; do [ -n "$f" ] && [ -s "$f" ] && { : > "$f"; n=$((n+1)); }; done; echo "runner command files written during run.sh: $n (truncated)"
           end=$(date -u +%FT%TZ)
           python - "$start" "$end" "$ec" <<'PY'
           import cryptography, json, os, platform, sys
@@ -162,3 +163,7 @@ jobs:
           print({k: m.get(k) for k in ("jobId", "plainBytes", "plainSha256", "encBytes", "encSha256", "exitCode", "startUtc", "endUtc", "runId")})
           raise SystemExit(0 if m.get("exitCode") == 0 else 1)
           PY
+      - name: Audit (job id form, result listing, meta field values)
+        if: always()
+        shell: bash
+        run: python tools/auditLog.py self --res "$RUNNER_TEMP/res" --job "$JOB_ID"
