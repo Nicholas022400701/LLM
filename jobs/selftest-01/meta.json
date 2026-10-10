@@ -1,0 +1,9 @@
+{
+ "jobId": "selftest-01",
+ "cryptBox": "v1",
+ "createdUtc": "2026-10-10T06:11:31Z",
+ "plainBytes": 411678,
+ "plainSha256": "d7122798344461b8a7fedc861549581f7292a73a203e9634d72fc1922577e6d1",
+ "encBytes": 411714,
+ "encSha256": "20bf2d4384da47513b94da870fe1528dc0ce73f58e8be95a7aa2ae785ed18514"
+}
