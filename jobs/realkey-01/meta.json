@@ -1,0 +1,9 @@
+{
+ "jobId": "realkey-01",
+ "cryptBox": "v1",
+ "createdUtc": "2026-10-10T15:00:50Z",
+ "plainBytes": 513417,
+ "plainSha256": "d09a13c64f1d7b41e895689c43234a3e31c83a5489b724f2022a7f202cc120d7",
+ "encBytes": 513453,
+ "encSha256": "fa7b6cc1fd2a814292feb1141fb8452dcb0c3c3214b755fc15ed8bc2a1eefba5"
+}
