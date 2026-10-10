@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# auditLog v1: checks what a run-job workflow run may reveal. Prints counts only, never log content.
+# auditLog v1.2: checks what a run-job workflow run may reveal. Prints counts only, never log content.
 #   self  - inside the workflow: result listing + meta/parts field values + job id form
 #   log   - on a saved Actions job log: key / canary hits, unknown 64-hex, residual free-text lines
 import argparse, ast, json, os, re, sys
@@ -9,6 +9,8 @@ tokRe = re.compile(r'^(?:[0-9a-f]{64}|[0-9a-f]{40}|' + isoRe + r'|[A-Za-z0-9_.:/
 freeTextKeys = {"uname", "format", "workflow", "repository", "runnerOs", "python", "cryptography", "version", "image"}
 reportKeys = {"jobId", "plainBytes", "plainSha256", "encBytes", "encSha256", "exitCode", "startUtc", "endUtc", "runId"}
 listingRe = re.compile(r'^(meta\.json|parts\.json|output\.enc\.b64(\.part\d{3})?)$')
+versionsRe = re.compile(r'^[A-Za-z][A-Za-z0-9_.-]* \d+(\.\d+)+( [A-Za-z][A-Za-z0-9_.-]* \d+(\.\d+)+)*$')
+freeText = re.compile(r'([A-Za-z]{3,}\s+){2,}[A-Za-z]{3,}')
 def walk(obj, key=""):
     if isinstance(obj, dict):
         for k, v in obj.items(): yield from walk(v, k)
@@ -32,25 +34,34 @@ def cmdSelf(a):
         vals = list(walk(json.load(open(p)))); b = [k for k, v in vals if badValue(k, v)]
         print("%s: %d values, unexpected %d" % (n, len(vals), len(b))); bad += len(b)
     print("audit self: %s" % ("ok" if bad == 0 else "FAIL %d" % bad)); sys.exit(6 if bad else 0)
-def prefixes(paths):
-    out = set()
+holeRe = re.compile(r'\$\(\(.*?\)\)|%[sdf]|\{[^}]*\}|\$\([^)]*\)|\$\{[^}]*\}|\$[A-Za-z_][A-Za-z0-9_]*|\\n|\\t')
+def patterns(paths):
+    # every fixed string the workflow / tools print becomes a pattern: literal pieces joined by wildcards
+    out = {}
     for p in paths:
         txt = open(p, encoding="utf-8", errors="replace").read()
-        for m in re.finditer(r'(?:echo|print|exit|SystemExit|die)\s*\(?\s*f?(["\'])(.*?)\1', txt):
-            s = re.split(r'[$%{\\]', m.group(2))[0].strip()
-            if len(s) >= 6: out.add(s)
-    return out
+        lits = [m.group(2) for m in re.finditer(r'(?:echo|print|exit|SystemExit|die)\s*\(?\s*f?(["\'])(.*?)\1', txt)]
+        lits += re.findall(r"s/\^/([^/]{6,})/", txt)
+        for lit in lits:
+            pieces = [x.replace("\\", "") for x in holeRe.split(lit)]; pieces = [x for x in pieces if x.strip()]
+            if sum(len(x.strip()) for x in pieces) < 8: continue
+            out[".*?".join(re.escape(x) for x in pieces)] = pieces
+    return [(re.compile(k), v) for k, v in sorted(out.items(), key=lambda kv: -sum(len(x) for x in kv[1]))]
 def cmdLog(a):
     tsRe = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z ?'); ansi = re.compile(r'\x1b\[[0-9;]*[A-Za-z]')
-    wfLines = set(); srcPaths = [p for p in [a.workflow] + a.source if p]
+    srcPaths = [p for p in [a.workflow] + (a.source or ["tools/cryptBox.py", "tools/auditLog.py"]) if p and os.path.exists(p)]
+    print("source files used: %d" % len(srcPaths))
+    wfLines = set()
     for p in srcPaths:
-        for ln in open(p, encoding="utf-8", errors="replace"): wfLines.add(ln.strip())
-    pre = sorted(prefixes(srcPaths), key=len, reverse=True)
+        for ln in open(p, encoding="utf-8", errors="replace"):
+            wfLines.add(ln.strip()); m = re.match(r'^\s*run:\s*(\S.*)$', ln)
+            if m: wfLines.add(m.group(1).strip())
+    pats = patterns(srcPaths)
     known = set()
     for p in a.known_hex: known |= set(hex64.findall(open(p, encoding="utf-8", errors="replace").read()))
     canaries = [c.strip() for c in open(a.canary_file)] if a.canary_file else []; canaries = [c for c in canaries if c]
     key = os.environ.get(a.key_env, "") if a.key_env else ""
-    c = dict(lines=0, github=0, ours=0, wfText=0, marker=0, envLine=0, envBad=0, prefix=0, prefixFree=0, dict=0, dictBad=0, residual=0, keyHits=0, canaryHits=0, unknown64=0, hex40Distinct=0)
+    c = dict(lines=0, github=0, ours=0, wfText=0, marker=0, envLine=0, envBad=0, pattern=0, patternFree=0, dict=0, dictBad=0, residual=0, keyHits=0, canaryHits=0, unknown64=0, hex40Distinct=0)
     ours = False; residual = []; all64 = set(); ok64 = set(); all40 = set()
     for raw in open(a.log, encoding="utf-8", errors="replace"):
         line = ansi.sub("", tsRe.sub("", raw.rstrip("\n"))); c["lines"] += 1
@@ -65,7 +76,8 @@ def cmdLog(a):
         if not ours: c["github"] += 1; ok64 |= h; continue
         c["ours"] += 1
         if s.startswith("##["): c["marker"] += 1; ok64 |= h; continue
-        if s in wfLines and s: c["wfText"] += 1; continue
+        if s and s in wfLines: c["wfText"] += 1; continue
+        if versionsRe.match(s): c["pattern"] += 1; continue
         if s.startswith("{") and s.endswith("}"):
             c["dict"] += 1
             try:
@@ -74,16 +86,17 @@ def cmdLog(a):
             if bad: c["dictBad"] += 1; residual.append(line)
             else: ok64 |= h
             continue
-        hit = next((p for p in pre if s.startswith(p)), None)
+        hit = next(((m, pieces) for pat, pieces in pats for m in [pat.search(s)] if m), None)
         if hit:
-            c["prefix"] += 1
-            if re.search(r'([A-Za-z]{3,}\s+){3,}[A-Za-z]{3,}', s[len(hit):]): c["prefixFree"] += 1; residual.append(line)
+            c["pattern"] += 1; left = s
+            for x in hit[1]: left = left.replace(x, " ", 1)
+            if freeText.search(left): c["patternFree"] += 1; residual.append(line)
             else: ok64 |= h
             continue
-        m = re.match(r'^(shell|env|[A-Z_][A-Z0-9_]*): ?(.*)$', s)
-        if m and not s.startswith("{"):
+        m = re.match(r'^  ([A-Za-z_][A-Za-z0-9_]*): ?(.*)$', line) or re.match(r'^(shell|env): ?(.*)$', s)
+        if m:
             c["envLine"] += 1
-            if not re.fullmatch(r'\*\*\*|true|false|-?\d+|/usr/bin/bash.*|[A-Za-z0-9_./:+-]{0,80}', m.group(2)): c["envBad"] += 1; residual.append(line)
+            if not re.fullmatch(r'\*\*\*|true|false|-?\d+|/usr/bin/bash.*|[A-Za-z0-9_./:+-]{0,120}', m.group(2)): c["envBad"] += 1; residual.append(line)
             continue
         residual.append(line)
     c["residual"] = len(residual); c["unknown64"] = len(all64 - known - ok64); c["hex40Distinct"] = len(all40)
@@ -95,6 +108,6 @@ def cmdLog(a):
     print("audit log:", json.dumps(c, separators=(",", ":"))); print("audit log: %s" % ("ok" if not fail else "FAIL")); sys.exit(6 if fail else 0)
 ap = argparse.ArgumentParser(); sp = ap.add_subparsers(dest="cmd", required=True)
 s1 = sp.add_parser("self"); s1.add_argument("--res", required=True); s1.add_argument("--job", required=True); s1.add_argument("--job-pattern", default=r'j-\d{8}-[0-9a-f]{6}')
-s2 = sp.add_parser("log"); s2.add_argument("--log", required=True); s2.add_argument("--workflow", default=".github/workflows/run-job.yml"); s2.add_argument("--source", action="append", default=["tools/cryptBox.py"])
+s2 = sp.add_parser("log"); s2.add_argument("--log", required=True); s2.add_argument("--workflow", default=".github/workflows/run-job.yml"); s2.add_argument("--source", action="append")
 s2.add_argument("--known-hex", action="append", default=[]); s2.add_argument("--canary-file"); s2.add_argument("--key-env"); s2.add_argument("--out"); s2.add_argument("--shape", type=int, default=0)
 a = ap.parse_args(); cmdSelf(a) if a.cmd == "self" else cmdLog(a)

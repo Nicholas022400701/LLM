@@ -121,7 +121,7 @@ jobs:
           else
             k="$SECRET_KEY"
           fi
-          mkdir -p "$RUNNER_TEMP/res"
+          rm -rf "$RUNNER_TEMP/res"; mkdir -p "$RUNNER_TEMP/res"
           sp=""; [ "$SPLIT_KB" = "0" ] || sp="--split $SPLIT_KB"
           LLM_DATA_KEY="$k" python tools/cryptBox.py encrypt --dir "$RUNNER_TEMP/work/output" --out "$RUNNER_TEMP/res/output.enc" --job "$JOB_ID" --b64 $sp
           python tools/cryptBox.py addmeta --meta "$RUNNER_TEMP/res/meta.json" --json "$RUNNER_TEMP/runmeta.json"
