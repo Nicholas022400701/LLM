@@ -1,0 +1,29 @@
+{
+ "jobId": "j-20261010-a08126",
+ "cryptBox": "v1",
+ "createdUtc": "2026-10-10T16:16:57Z",
+ "plainBytes": 176,
+ "plainSha256": "7ab6f979c951de526e2409f814748a770b0f0880e85e1250e65fd788e1cf6dab",
+ "encBytes": 212,
+ "encSha256": "2cd06094fd8b61986c3acc4e0080446fe30ecd6a0107020f9f5f0eb49a3e70c8",
+ "runId": 38067014912,
+ "runAttempt": 1,
+ "runnerInfo": {
+  "uname": "Linux runnervmmprz5 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64",
+  "nproc": 4,
+  "memoryBytes": 16766414848,
+  "python": "3.12.15",
+  "cryptography": "50.0.2"
+ },
+ "startUtc": "2026-10-10T16:16:57Z",
+ "endUtc": "2026-10-10T16:16:57Z",
+ "exitCode": 98,
+ "github": {
+  "repository": "Nicholas022400701/LLM",
+  "private": false,
+  "commitSha": "a9fe38d5f27475a3ff8af5883a45387381631ac7",
+  "workflowRunId": 38067014912,
+  "workflow": "run-job.yml",
+  "runnerOs": "Linux"
+ }
+}
