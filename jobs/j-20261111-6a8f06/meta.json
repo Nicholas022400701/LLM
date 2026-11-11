@@ -1,0 +1,14 @@
+{
+ "jobId": "j-20261111-6a8f06",
+ "cryptBox": "v1",
+ "createdUtc": "2026-11-11T18:14:08Z",
+ "fileCount": 2,
+ "plainBytes": 830,
+ "plainSha256": "2f49c876860d37900a44bfedcd8c3e80da8b27690dedb1a869b2ba6e1949fdd5",
+ "encBytes": 866,
+ "encSha256": "331559a43a1e7aa40506f61a1e3676baea1fe9e24c213f8c25a3bfd2e950b38e",
+ "urls": {
+  "report/report.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/report.md?token=A3X3KDWIQL6BJCGKYJTVKE3K6SYMRAA",
+  "ai_log/AI_Log.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/AI_Log.md?token=A3X3KDXXZJYJPSVOYQUN7NLK6SYNTAA"
+ }
+}
