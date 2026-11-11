@@ -2,29 +2,24 @@
  "cryptBox": "v1",
  "jobId": "j-20261111-6a8f06",
  "file": "output.enc.b64",
- "partBytes": 35840,
+ "partBytes": 25600,
  "parts": [
   {
    "name": "output.enc.b64.part000",
-   "bytes": 35840,
-   "sha256": "d0320624104f6d14b0a3f047594b3900a2d92901bcd3a081738fce5d26deacab"
+   "bytes": 25600,
+   "sha256": "9b62bcf1f5440b07421dcecb803baa6a403d5e5187fcc0c75746ebcbf8f7fe33"
   },
   {
    "name": "output.enc.b64.part001",
-   "bytes": 35840,
-   "sha256": "be8be84e6285344cad2634e4219db906f892ebbc07c7229f2591155e637cfe77"
+   "bytes": 25600,
+   "sha256": "357840445911ea1947d7081fe5e8bfaa3cd6157c90b157b5bdaf8025b24355ca"
   },
   {
    "name": "output.enc.b64.part002",
-   "bytes": 35840,
-   "sha256": "b1fad4b305b6719b4bcb6ab17f3dd4cef81e615f814b6b4d520fe9caa5950a89"
-  },
-  {
-   "name": "output.enc.b64.part003",
-   "bytes": 4041,
-   "sha256": "1e45af9ddeca4b178e51a74515ccdbabd49db91a3bfd4ded00617b3b266754a6"
+   "bytes": 11049,
+   "sha256": "0572879722ff3752d41134fd952fee9122b8c34ea71af1c7a5101a6c327ff3fa"
   }
  ],
- "totalBytes": 111561,
- "totalSha256": "8b3c7f51a45999914d12653837cc2dacca45480f219ca9e0fc9c7c91a123154c"
+ "totalBytes": 62249,
+ "totalSha256": "afae4db7b604a9f3401d3e2e89e9159f281ed4adc05c8bd28a5eb0429a3ce8ff"
 }
