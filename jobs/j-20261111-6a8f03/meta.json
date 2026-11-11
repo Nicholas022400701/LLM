@@ -1,0 +1,10 @@
+{
+ "jobId": "j-20261111-6a8f03",
+ "cryptBox": "v1",
+ "createdUtc": "2026-11-11T16:55:06Z",
+ "fileCount": 4,
+ "plainBytes": 13729,
+ "plainSha256": "1aaabd252e080457aa99135c51122bdcda14f54da2e9f644c37f948f495cfb06",
+ "encBytes": 13765,
+ "encSha256": "5f258c5fecddb55ea54b3bab9169b73f8c4f0125d8c8b3044d75d773b1d6ae2e"
+}
