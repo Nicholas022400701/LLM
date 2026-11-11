@@ -1,20 +1,12 @@
 {
   "jobId": "j-20261111-6a8f06",
-  "createdUtc": "2026-11-11T18:49:00Z",
+  "createdUtc": "2026-11-11T18:50:10Z",
   "entry": "python3 fetch.py",
   "timeoutSec": 120,
   "urls": {
-    "report/README.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/README.md?token=A3X3KDRFACX2XAABWFOSCA3K6S4LPAA",
-    "report/build_docx.py": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/build_docx.py?token=A3X3KDWLCORM6RZW4SESAHTK6S4LPAA",
-    "report/figures_manifest.csv": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/figures_manifest.csv?token=A3X3KDRICRCHGQCSM6UJHVDK6S4LPAA",
-    "ai_log/build_ailog.py": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/build_ailog.py?token=A3X3KDSGAMVVSUHTACB2PS3K6S4LRAA",
-    "ai_log/prompt_evolution.csv": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/prompt_evolution.csv?token=A3X3KDXQ47OEUXL7FTJEVF3K6S4LRAA",
-    "figures/data/adr_distribution.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/adr_distribution.svg?token=A3X3KDQS7U4HDG7PHBCFHS3K6S4L7AA",
-    "figures/data/bookings_over_time.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/bookings_over_time.svg?token=A3X3KDTRWRXE67UMIQEAVODK6S4L7AA",
-    "figures/data/cancel_by_deposit.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_deposit.svg?token=A3X3KDXYBCUXY74R57ERZ2TK6S4L7AA",
-    "figures/data/cancel_by_leadtime.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_leadtime.svg?token=A3X3KDWV5JWVCOM5PYAAJ7DK6S4L7AA",
-    "figures/data/cancel_by_month_hotel.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_month_hotel.svg?token=A3X3KDWDAVRKHDXYPFGPB3LK6S4L7AA",
-    "figures/data/cancel_by_segment.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_segment.svg?token=A3X3KDQXFGPB2KVKDHL6SC3K6S4L7AA",
-    "figures/data/drift_by_quarter.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/drift_by_quarter.svg?token=A3X3KDRO7EELDSW2RW3DXMDK6S4L7AA"
+    "figures/model/roc_pr.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/model/roc_pr.svg?token=A3X3KDVLYQ2CTKYZSWYQUDTK6S4R5AA",
+    "figures/model/shap_beeswarm.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/model/shap_beeswarm.svg?token=A3X3KDWALTXIXOGFH67TMZ3K6S4R5AA",
+    "figures/decision/recovered_walked_by_k.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/decision/recovered_walked_by_k.svg?token=A3X3KDX67KUGXE4WYGDSRSLK6S4SHAA",
+    "demo/slides/fonts/fonts.css": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/demo/slides/fonts/fonts.css?token=A3X3KDX7FNHCRNGRTGIB4WDK6S4SVAA"
   }
 }
