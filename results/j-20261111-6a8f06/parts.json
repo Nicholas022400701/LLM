@@ -1,0 +1,30 @@
+{
+ "cryptBox": "v1",
+ "jobId": "j-20261111-6a8f06",
+ "file": "output.enc.b64",
+ "partBytes": 35840,
+ "parts": [
+  {
+   "name": "output.enc.b64.part000",
+   "bytes": 35840,
+   "sha256": "d0320624104f6d14b0a3f047594b3900a2d92901bcd3a081738fce5d26deacab"
+  },
+  {
+   "name": "output.enc.b64.part001",
+   "bytes": 35840,
+   "sha256": "be8be84e6285344cad2634e4219db906f892ebbc07c7229f2591155e637cfe77"
+  },
+  {
+   "name": "output.enc.b64.part002",
+   "bytes": 35840,
+   "sha256": "b1fad4b305b6719b4bcb6ab17f3dd4cef81e615f814b6b4d520fe9caa5950a89"
+  },
+  {
+   "name": "output.enc.b64.part003",
+   "bytes": 4041,
+   "sha256": "1e45af9ddeca4b178e51a74515ccdbabd49db91a3bfd4ded00617b3b266754a6"
+  }
+ ],
+ "totalBytes": 111561,
+ "totalSha256": "8b3c7f51a45999914d12653837cc2dacca45480f219ca9e0fc9c7c91a123154c"
+}
