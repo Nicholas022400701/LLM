@@ -1,12 +1,10 @@
 {
-  "jobId": "j-20261111-6a8f06",
-  "createdUtc": "2026-11-11T18:50:10Z",
-  "entry": "python3 fetch.py",
-  "timeoutSec": 120,
-  "urls": {
-    "figures/model/roc_pr.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/model/roc_pr.svg?token=A3X3KDVLYQ2CTKYZSWYQUDTK6S4R5AA",
-    "figures/model/shap_beeswarm.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/model/shap_beeswarm.svg?token=A3X3KDWALTXIXOGFH67TMZ3K6S4R5AA",
-    "figures/decision/recovered_walked_by_k.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/decision/recovered_walked_by_k.svg?token=A3X3KDX67KUGXE4WYGDSRSLK6S4SHAA",
-    "demo/slides/fonts/fonts.css": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/demo/slides/fonts/fonts.css?token=A3X3KDX7FNHCRNGRTGIB4WDK6S4SVAA"
-  }
+ "jobId": "j-20261111-6a8f06",
+ "command": "python3 fetch.py",
+ "files": {
+  "report/build_docx.py": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/build_docx.py?token=A3X3KDUYBU7ZSVIGQU2K7ULK6S5KXAA",
+  "report/figures_manifest.csv": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/figures_manifest.csv?token=A3X3KDU3NTOAUIGVD2LLS4DK6S5KXAA",
+  "ai_log/build_ailog.py": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/build_ailog.py?token=A3X3KDRXGKU57BWUQP6SP2DK6S5K3AA",
+  "ai_log/prompt_evolution.csv": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/prompt_evolution.csv?token=A3X3KDT34X2IZTNJ3AIXLYTK6S5K3AA"
+ }
 }
