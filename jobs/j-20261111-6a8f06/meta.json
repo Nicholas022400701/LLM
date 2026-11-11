@@ -1,14 +1,20 @@
 {
   "jobId": "j-20261111-6a8f06",
-  "createdUtc": "2026-11-11T18:28:00Z",
+  "createdUtc": "2026-11-11T18:49:00Z",
   "entry": "python3 fetch.py",
   "timeoutSec": 120,
   "urls": {
-    "README.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/README.md?token=A3X3KDS2DZJBCRJKR4ZXJMDK6SZZZAA",
-    "SWARM.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/SWARM.md?token=A3X3KDURXSZCMWWTCLJRYHLK6SZZZAA",
-    "docs/business_plan.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/docs/business_plan.md?token=A3X3KDWHR4INFGNVUWMEHPLK6SZZ7AA",
-    "docs/references.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/docs/references.md?token=A3X3KDST2URQEX7YFK4BNS3K6SZZ7AA",
-    "docs/market_sources.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/docs/market_sources.md?token=A3X3KDTX6NOUQ7HMNKDCZOLK6SZZ7AA",
-    "demo/slides/fonts/cjk.css": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/demo/slides/fonts/cjk.css?token=A3X3KDUH2F5MZDW4CYVXICTK6SZ2HAA"
+    "report/README.md": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/README.md?token=A3X3KDRFACX2XAABWFOSCA3K6S4LPAA",
+    "report/build_docx.py": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/build_docx.py?token=A3X3KDWLCORM6RZW4SESAHTK6S4LPAA",
+    "report/figures_manifest.csv": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/report/figures_manifest.csv?token=A3X3KDRICRCHGQCSM6UJHVDK6S4LPAA",
+    "ai_log/build_ailog.py": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/build_ailog.py?token=A3X3KDSGAMVVSUHTACB2PS3K6S4LRAA",
+    "ai_log/prompt_evolution.csv": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/ai_log/prompt_evolution.csv?token=A3X3KDXQ47OEUXL7FTJEVF3K6S4LRAA",
+    "figures/data/adr_distribution.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/adr_distribution.svg?token=A3X3KDQS7U4HDG7PHBCFHS3K6S4L7AA",
+    "figures/data/bookings_over_time.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/bookings_over_time.svg?token=A3X3KDTRWRXE67UMIQEAVODK6S4L7AA",
+    "figures/data/cancel_by_deposit.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_deposit.svg?token=A3X3KDXYBCUXY74R57ERZ2TK6S4L7AA",
+    "figures/data/cancel_by_leadtime.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_leadtime.svg?token=A3X3KDWV5JWVCOM5PYAAJ7DK6S4L7AA",
+    "figures/data/cancel_by_month_hotel.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_month_hotel.svg?token=A3X3KDWDAVRKHDXYPFGPB3LK6S4L7AA",
+    "figures/data/cancel_by_segment.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/cancel_by_segment.svg?token=A3X3KDQXFGPB2KVKDHL6SC3K6S4L7AA",
+    "figures/data/drift_by_quarter.svg": "https://raw.githubusercontent.com/Nicholas022400701/gtsc2143-staycast/93f326784317b28d6a76a107d2a7fddf2c24955d/figures/data/drift_by_quarter.svg?token=A3X3KDRO7EELDSW2RW3DXMDK6S4L7AA"
   }
 }
