@@ -1,10 +1,10 @@
 {
  "jobId": "j-20261111-6a8f01",
  "cryptBox": "v1",
- "createdUtc": "2026-11-11T16:06:40Z",
+ "createdUtc": "2026-11-11T16:11:16Z",
  "fileCount": 4,
- "plainBytes": 14495,
- "plainSha256": "70fd1d0f77ed432d2b58d86331a29e5446baa5f5302abaaee8d366d7b83eba55",
- "encBytes": 14531,
- "encSha256": "b43280f3309e67fa2ea5c1a47c71d8f232af50295e61d6363c0bc23f1b9819ba"
+ "plainBytes": 13474,
+ "plainSha256": "e20648897d881f66e9bb754ba7202efc6fab642da16f72d1a6491d95eb522ba6",
+ "encBytes": 13510,
+ "encSha256": "fc5d39c5b2bb35657d943446f2a16144a381f029507406491623fb214f843540"
 }
